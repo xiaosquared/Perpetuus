@@ -1,0 +1,15 @@
+/**
+BUGS:
+- phantom notes- this only happens if i play 4 octaves of 2 handed scales.
+- if i hold a note the bouncing ball disappears
+
+NEW FEATURES:
+
+- for loop mode, make echo balls diff color
+- make the ball stay longer for longer notes? or a trail of sorts?
+- sus pedal to record looped part. normally not looped - DONE
+- how to clear loops?
+- record and playback mode triggerd with key presses
+
+**/
+//error messages
