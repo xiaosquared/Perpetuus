@@ -24,6 +24,8 @@ public class Ball {
 	float t_send_note_off;
 	float t_offset = 500;	 
 	float duration = 0;
+	float note_width = 8.41f;
+	float x_offset = 90f;
 	
 	// state
 	BallStatus state = BallStatus.INIT;
@@ -40,9 +42,10 @@ public class Ball {
 		this.note = note;
 		//this.note_velocity = Math.max(1, note_velocity - 7); // a little softer because Disklavier tends to hit harder than people
 		this.note_velocity = Math.max(1, note_velocity); // a little softer because Disklavier tends to hit harder than people
+		
 		// for animation
 		this.t0 = t0;
-		screen_xy = new PVector((float)((note-21) * 9.32 + 48), 0);
+		screen_xy = new PVector((float)((note-21) * note_width + x_offset), 0);
 		
 		// times
 		t_end = v0/g + t0;

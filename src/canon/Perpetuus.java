@@ -2,6 +2,8 @@ package canon;
 
 import java.awt.Container;
 import java.awt.Frame;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.awt.BasicStroke;
@@ -13,13 +15,15 @@ import processing.core.PVector;
 import rwmidi.*;
 
 public class Perpetuus extends PApplet {
-
+	private static final long serialVersionUID = 1L;
+	 
 	// settings
 	private boolean USE_MIDI_INPUT = true;
 	private boolean USE_MIDI_OUTPUT = true;
 	private boolean DEBUG = false;
 	private boolean VARIABLE_HEIGHT = false;
-	float y_scale = 5;		// height scale of balls
+	float y_scale = 6;		// height scale of balls
+	int y_offset = 215;		// adjustment for projection onto keys
 	int rad = 7;			// radius of balls
 	
 	// MIDI
@@ -31,7 +35,7 @@ public class Perpetuus extends PApplet {
 	private Phrase current_phrase;
 	
 	// modes
-	private boolean sus_on = false;
+	private boolean sus_on = true;
 	private boolean record = true;
 	
 	// concurrency issues
@@ -43,8 +47,7 @@ public class Perpetuus extends PApplet {
 	BasicStroke pen;
 	
 	public void setup() {
-		size(1024, 675);
-		findFrame().setLocation(1280, 0);
+		size(1024, 535 + y_offset); 
 		
 		stroke(255);
 		fill(255);
@@ -163,13 +166,13 @@ public class Perpetuus extends PApplet {
 //			fill(0);
 //		}
 			
-		ellipse(xy.x, y, rad, rad);
+		ellipse(xy.x, y - y_offset, rad, rad);
 	}
 	
 	private void drawCurve(ArrayList<PVector> curvePts) {
 		for (int i = 0; i < curvePts.size(); i++)
 			if (i != 0)
-				line(curvePts.get(i).x, curvePts.get(i).y, curvePts.get(i-1).x, curvePts.get(i-1).y);
+				line(curvePts.get(i).x, curvePts.get(i).y - y_offset, curvePts.get(i-1).x, curvePts.get(i-1).y);
 	}
 	
 	public void noteOnReceived(Note n) {
@@ -222,13 +225,6 @@ public class Perpetuus extends PApplet {
 			println("sus pedal: " + sus_on + " " + c.getValue());
 	}
 	
-	private Frame findFrame() {		
-		Container f = this.getParent();
-	    while (!(f instanceof Frame) && f!=null)
-	    	f = f.getParent();
-	    return (Frame) f;
-	}
-	
 	public void mousePressed() {
 		//println("test note output");
 		//output.sendNoteOn(0, 50, 20);
@@ -244,5 +240,25 @@ public class Perpetuus extends PApplet {
 			println("PLAY!");
 		}
 			
+	}
+	
+	public static void main(String[] args) {
+		/* 
+		 * places window on second screen automatically if there's additional display
+		 * 
+		 */
+		int primary_width;
+		int screen_y = 0;
+		
+		GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice devices[] = environment.getScreenDevices();
+		String location;
+		if (devices.length > 1) {
+			primary_width = devices[0].getDisplayMode().getWidth();
+			location = "--location=" +primary_width+ "," + screen_y;
+		} else {
+			location="--location=0,0";
+		}
+	    PApplet.main(new String[] { location, Perpetuus.class.getName() });
 	}
  }
