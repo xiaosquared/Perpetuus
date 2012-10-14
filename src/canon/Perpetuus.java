@@ -22,6 +22,12 @@ public class Perpetuus extends PApplet {
 	private boolean USE_MIDI_OUTPUT = true;
 	private boolean DEBUG = false;
 	private boolean VARIABLE_HEIGHT = false;
+	
+	// this should be false, unless:
+	// 1. you're Daesun
+	// 2. you're using Ableton to input MIDI
+	private boolean DAESUN_ABLETON_INPUT = true;
+	
 	float y_scale = 6;		// height scale of balls
 	int y_offset = 215;		// adjustment for projection onto keys
 	int rad = 7;			// radius of balls
@@ -35,7 +41,7 @@ public class Perpetuus extends PApplet {
 	private Phrase current_phrase;
 	
 	// modes
-	private boolean sus_on = true;
+	private boolean sus_on = false;
 	private boolean record = true;
 	
 	// concurrency issues
@@ -59,10 +65,27 @@ public class Perpetuus extends PApplet {
 		Graphics2D g2 = ((PGraphicsJava2D) g).g2;
 		g2.setStroke(pen);	
 		
+		
 		if (USE_MIDI_INPUT)
 			input = RWMidi.getInputDevices()[0].createInput(this);
 		if (USE_MIDI_OUTPUT)
 			output = RWMidi.getOutputDevices()[0].createOutput();
+		
+		
+		if (DAESUN_ABLETON_INPUT){
+			System.out.println("Input devices:");
+			for (MidiInputDevice x : RWMidi.getInputDevices()){
+				System.out.println(x.toString());
+			}
+			System.out.println("Output devices:");
+			for (MidiOutputDevice x : RWMidi.getOutputDevices()){
+				System.out.println(x.toString());
+			}
+			
+			input = RWMidi.getInputDevices()[0].createInput();
+			// fix this to just output to "Java Sound Synthesizer Sun Microsystems"
+			output = RWMidi.getOutputDevices()[2].createOutput();
+		}
 	
 		//println(RWMidi.getOutputDeviceNames());
 		
@@ -226,10 +249,10 @@ public class Perpetuus extends PApplet {
 	}
 	
 	public void mousePressed() {
-		//println("test note output");
-		//output.sendNoteOn(0, 50, 20);
-		//delay(500);
-		//output.sendNoteOff(0, 50, 20);
+		println("test note output");
+		output.sendNoteOn(0, 50, 20);
+		delay(500);
+		output.sendNoteOff(0, 50, 20);
 	}
 	
 	public void keyPressed() {
